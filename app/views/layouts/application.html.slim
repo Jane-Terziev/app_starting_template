@@ -13,7 +13,7 @@ html
     = javascript_importmap_tags
     = yield :head
 
-  body data-controller="theme dialog"
+  body data-controller="theme dialog drawer sidebar"
     = render partial: 'shared/snackbar'
     - if current_user
       = turbo_stream_from current_user.id

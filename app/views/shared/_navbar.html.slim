@@ -1,8 +1,8 @@
 header
   nav
     - if current_user
-      button#hamburgerMenu.circle.transparent data-controller="drawer" data-drawer-element-id-value="dialog-navigation-drawer" data-action="click->drawer#toggle"
-      i menu
+      button#hamburgerMenu.circle.transparent data-action="click->drawer#toggle"
+        i menu
     div.max
-    button.circle.transparent data-controller="theme" data-action="click->theme#toggle" onclick="this.blur();"
+    button.circle.transparent data-action="click->theme#toggle" onclick="this.blur();"
       i dark_mode

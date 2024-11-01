@@ -1,20 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static values = {
-        elementId: String
-    }
-
-    connect() {
-        this.drawer = document.getElementById(this.elementIdValue);
-    }
+    static targets = ['drawer']
 
     toggle() {
-        console.log(this.drawer);
-        if(this.drawer.open) {
-            this.drawer.close();
+        if(this.drawerTarget.open) {
+            this.drawerTarget.close();
         } else {
-            this.drawer.show();
+            this.drawerTarget.show();
         }
     }
 }

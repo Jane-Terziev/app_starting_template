@@ -1,13 +1,13 @@
-nav(class=class_list data-controller="sidebar" data-turbo-permanent id=id)
+nav(class=class_list data-sidebar-target="drawer" data-turbo-permanent id=id)
   header style="width: 100%"
     nav
-      h6.max.small-margin style="text-wrap: nowrap" AppName
+      h6.max.small-margin style="text-wrap: nowrap" data-sidebar-target="appName" AppName
       - if dialog
         button.transparent.circle.large onclick="document.querySelector('#dialog-navigation-drawer').close();"
           i close
       - else
-        button.transparent.circle data-action="click->sidebar#toggle" onclick="this.blur();"
-          i arrow_back
+        button.transparent.circle data-sidebar-target="actionButton" data-action="click->sidebar#toggle" onclick="this.blur();"
+          i data-sidebar-target="buttonIcon" arrow_back
 
   div.small-divider
 

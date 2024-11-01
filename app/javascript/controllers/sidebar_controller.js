@@ -1,17 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    toggle(event) {
-        this.element.classList.toggle('drawer');
-        const icon = event.target.querySelector('i');
-        if(icon.innerText === 'arrow_back') {
-            icon.innerText = 'arrow_forward';
-            event.target.classList.add('center');
-            this.element.querySelector('h6').style.display = 'none';
+    static targets = ['buttonIcon', 'drawer', 'appName', 'actionButton']
+
+    toggle() {
+        this.drawerTarget.classList.toggle('drawer');
+        if(this.buttonIconTarget.innerText === 'arrow_back') {
+            this.buttonIconTarget.innerText = 'arrow_forward';
+            this.actionButtonTarget.classList.add('center');
+            this.appNameTarget.style.display = 'none';
         } else {
-            icon.innerText = 'arrow_back'
-            event.target.classList.remove('center');
-            this.element.querySelector('h6').style.display = 'flex';
+            this.buttonIconTarget.innerText = 'arrow_back'
+            this.actionButtonTarget.classList.remove('center');
+            this.appNameTarget.style.display = 'flex';
         }
     }
 }
