@@ -1,0 +1,40 @@
+@media(max-width: 992px) {
+    #bottom-navigation {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    #hamburgerMenu {
+        display: inline-flex;
+    }
+
+    #sidebar {
+        display: none;
+    }
+
+    nav.left:not(.s,.m,.l)~.responsive {
+        padding-left: 0;
+    }
+}
+
+@media(min-width: 993px) {
+    #hamburgerMenu {
+        display: none;
+    }
+
+    #sidebar {
+        display: flex;
+    }
+
+    main {
+        padding: 0.25rem;
+    }
+}
+
+body.light #sidebar {
+    border: 1px solid lightgrey;
+}
+
+body.dark #sidebar {
+    border: 1px solid #41474D;
+}

@@ -1,0 +1,16 @@
+nav(class=class_list data-controller="sidebar" data-turbo-permanent id=id)
+  header style="width: 100%"
+    nav
+      h6.max.small-margin style="text-wrap: nowrap" AppName
+      - if dialog
+        button.transparent.circle.large onclick="document.querySelector('#dialog-navigation-drawer').close();"
+          i close
+      - else
+        button.transparent.circle data-action="click->sidebar#toggle" onclick="this.blur();"
+          i arrow_back
+
+  div.small-divider
+
+  = link_to authentication.destroy_user_session_path, "data-turbo-method": :delete do
+    i logout
+    | Logout

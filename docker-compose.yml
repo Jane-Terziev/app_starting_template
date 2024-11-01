@@ -1,0 +1,27 @@
+services:
+  db:
+    container_name: db
+    image: 'postgres:13'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+    env_file:
+      - '.env_docker'
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  app:
+    container_name: app
+    depends_on:
+      - 'db'
+    build: .
+    command: bundle exec rails s -b '0.0.0.0' -p 3000
+    volumes:
+      - '.:/app_name'
+    ports:
+      - '3000:3000'
+    env_file:
+      - '.env_docker'
+
+volumes:
+  postgres:
+

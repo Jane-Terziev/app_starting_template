@@ -1,0 +1,19 @@
+- flash_error = flash[:error] || flash[:alert]
+- flash_success = flash[:success] || flash[:notice]
+- snackbar_class = flash_error ? 'error' : 'green8 white-text'
+- flash_message = flash_error || flash_success
+
+#snackbarContainer
+  - if flash_message
+    - if flash_message.is_a?(Array)
+      - flash_message.each do |message|
+        div.snackbar class=snackbar_class class="active top" data-controller="snackbar" data-turbo-temporary=true
+          = message
+    - elsif flash_message.is_a?(Hash)
+      - flash_message.each do |key, value|
+        div.snackbar class=snackbar_class class="active top" data-controller="snackbar" data-turbo-temporary=true
+          = key.humanize
+          = value.is_a?(Array) ? value.join(', ') : value
+    - else
+      div.snackbar class=snackbar_class class="active top" data-controller="snackbar" data-turbo-temporary=true
+        = flash_message

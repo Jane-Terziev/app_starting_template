@@ -1,0 +1,29 @@
+doctype html
+
+html
+  head
+    title AppName
+    meta name="turbo-cache-control" content="no-cache"
+    meta name="viewport" content="width=device-width,initial-scale=1"
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag "https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css", "data-turbo-track": "reload"
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = stylesheet_link_tag "navigation", "data-turbo-track": "reload"
+    = javascript_importmap_tags
+    = yield :head
+
+  body data-controller="theme dialog"
+    = render partial: 'shared/snackbar'
+    - if current_user
+      = turbo_stream_from current_user.id
+      = render partial: 'shared/sidebar', locals: { id: 'sidebar', dialog: false, class_list: 'left drawer l' }
+      = render partial: 'shared/navigation_drawer'
+      = render partial: 'shared/bottom_navigation'
+      main.responsive.max
+        = render partial: 'shared/navbar'
+        div.medium-margin
+          = yield
+    - else
+      = render partial: 'shared/navbar'
+      = yield

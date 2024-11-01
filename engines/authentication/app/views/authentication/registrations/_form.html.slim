@@ -1,0 +1,11 @@
+= form_tag(user_registration_path, "data-controller": 'form', id: 'registrationForm', class: 'left-align') do
+  = input_field form: form, field_name: :first_name, name: 'registration[first_name]', type: 'text', label: 'First Name'
+  = input_field form: form, field_name: :last_name, name: 'registration[last_name]', type: 'text', label: 'Last Name'
+  = input_field form: form, field_name: :email, name: 'registration[email]', type: 'email', label: 'Email'
+  = input_field form: form, field_name: :password, name: 'registration[password]', type: 'password', label: 'Password'
+  = input_field form: form, field_name: :password_confirmation, name: 'registration[password_confirmation]', type: 'password', label: 'Password Confirmation'
+
+  div.space
+  div.center-align
+    = link_to 'Back', new_user_session_path, class: 'button border error-text'
+    = button_tag "Sign Up"

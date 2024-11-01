@@ -1,0 +1,6 @@
+= form_tag(new_user_session_path, "data-controller": 'form sign-in-form', id: 'sessionForm', class: 'left-align') do
+  = input_field form: form, field_name: :email, type: 'email', name: 'session[email]', label: 'Email', options: { 'data-sign-in-form-target' => 'emailInput' }
+  = input_field form: form, field_name: :password, type: 'password', name: 'session[password]', label: 'Password', options: { 'data-sign-in-form-target' => 'passwordInput' }
+
+  div.space
+  div.center-align = button_tag 'Log In'

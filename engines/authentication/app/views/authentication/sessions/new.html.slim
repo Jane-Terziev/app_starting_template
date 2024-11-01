@@ -1,0 +1,10 @@
+= content_for :head do
+  = stylesheet_link_tag "authentication/application", "data-turbo-track": "reload"
+
+main.center-align.middle-align style="height: 85vh;"
+  article#signInCard
+    h4.max.center-align Log In
+    div.small-divider
+    div.space
+    = render "form", form: form
+    div.center-align.top-margin = link_to "Sign Up", new_user_registration_path, class: 'link'
