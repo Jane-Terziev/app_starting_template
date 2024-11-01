@@ -1,0 +1,36 @@
+require "importmap-rails"
+
+module <%= file_name.capitalize %>
+  class Engine < ::Rails::Engine
+    isolate_namespace <%= file_name.capitalize %>
+
+    initializer "<%= file_name %>.assets.precompile" do |app|
+      app.config.assets.paths << root.join("app/javascript")
+      app.config.assets.paths << root.join("app/assets/stylesheets")
+      app.config.assets.precompile += %w[<%= file_name %>/manifest.js]
+    end
+
+    initializer "<%= file_name %>.importmap", before: "importmap" do |app|
+      app.config.importmap.paths << root.join("config/importmap.rb")
+      app.config.importmap.cache_sweepers << root.join("app/javascript")
+    end
+
+    initializer "<%= file_name %>.migrations" do |app|
+      app.config.paths["db/migrate"] << root.join("db/migrate")
+    end
+
+    config.after_initialize do
+      Dry::System.register_provider_source(:<%= file_name %>, group: :<%= file_name %>) do
+        prepare do
+        end
+
+        start do
+          event_publisher = App::Container["events.publisher"]
+        end
+      end
+
+      App::Container.register_provider(:<%= file_name %>, from: :<%= file_name %>)
+      App::Container.start(:<%= file_name %>) unless Rails.env.test?
+    end
+  end
+end

@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+gemspec
+
+# Architecture
+gem "dry-validation"
+gem "dry-struct"
+gem "dry-system", "~> 1"
+gem "rails_event_store", "~> 2.2"
+
+# Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+gem "rubocop-rails-omakase", require: false

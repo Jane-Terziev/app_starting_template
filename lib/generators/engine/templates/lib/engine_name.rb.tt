@@ -1,0 +1,5 @@
+require "<%= file_name %>/version"
+require "<%= file_name %>/engine"
+
+module <%= file_name.capitalize %>
+end

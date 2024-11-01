@@ -1,0 +1,2 @@
+<%= file_name.capitalize %>::Engine.routes.draw do
+end

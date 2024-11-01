@@ -1,0 +1,5 @@
+module <%= file_name.capitalize %>
+  class ApplicationController < ::ApplicationController
+  end
+end
+

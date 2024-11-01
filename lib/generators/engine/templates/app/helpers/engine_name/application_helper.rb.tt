@@ -1,0 +1,4 @@
+module <%= file_name.capitalize %>
+  module ApplicationHelper
+  end
+end

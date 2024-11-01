@@ -1,0 +1,4 @@
+module <%= file_name.capitalize %>
+  class ApplicationRecord < ::ApplicationRecord
+  end
+end
