@@ -1,10 +1,7 @@
 class MetadataEventPublisher
   attr_reader :client, :current_user_repository
 
-  def initialize(
-    client: App::Container.resolve("events.client"),
-    current_user_repository: App::Container.resolve("current_user_repository")
-  )
+  def initialize(client:, current_user_repository: CurrentUserRepository)
     self.client = client
     self.current_user_repository = current_user_repository
   end

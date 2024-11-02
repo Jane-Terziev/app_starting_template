@@ -33,6 +33,7 @@ class EngineGenerator < Rails::Generators::NamedBase
     engine_root_path = "engines/#{file_name}"
     empty_directory("#{engine_root_path}/app/assets/stylesheets/#{file_name}")
     empty_directory("#{engine_root_path}/app/assets/images/#{file_name}")
+    empty_directory("#{engine_root_path}/app/javascript/controllers")
     template("app/controllers/engine_name/application_controller.rb.tt", "#{engine_root_path}/app/controllers/#{file_name}/application_controller.rb")
     template("app/helpers/engine_name/application_helper.rb.tt", "#{engine_root_path}/app/helpers/#{file_name}/application_helper.rb")
     template("app/jobs/engine_name/application_job.rb.tt", "#{engine_root_path}/app/jobs/#{file_name}/application_job.rb")
@@ -47,10 +48,5 @@ class EngineGenerator < Rails::Generators::NamedBase
       "
 gem '#{file_name}', path: 'engines/#{file_name}'"
     end
-  end
-
-  def update_main_app_routes
-    route_code = "mount #{file_name.capitalize}::Engine, at: '/#{file_name}'"
-    insert_into_file "config/routes.rb", "  #{route_code}\n", after: "Rails.application.routes.draw do\n"
   end
 end

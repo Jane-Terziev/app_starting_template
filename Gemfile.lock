@@ -3,8 +3,6 @@ PATH
   specs:
     authentication (0.1.0)
       devise
-      dry-struct
-      dry-system (~> 1)
       dry-validation
       importmap-rails
       rails (>= 8.0.0.rc1)
@@ -117,9 +115,6 @@ GEM
       dotenv (= 3.1.4)
       railties (>= 6.1)
     drb (2.2.1)
-    dry-auto_inject (1.0.1)
-      dry-core (~> 1.0)
-      zeitwerk (~> 2.6)
     dry-configurable (1.2.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
@@ -141,16 +136,6 @@ GEM
       dry-logic (>= 1.4, < 2)
       dry-types (>= 1.7, < 2)
       zeitwerk (~> 2.6)
-    dry-struct (1.6.0)
-      dry-core (~> 1.0, < 2)
-      dry-types (>= 1.7, < 2)
-      ice_nine (~> 0.11)
-      zeitwerk (~> 2.6)
-    dry-system (1.0.1)
-      dry-auto_inject (~> 1.0, < 2)
-      dry-configurable (~> 1.0, < 2)
-      dry-core (~> 1.0, < 2)
-      dry-inflector (~> 1.0, < 2)
     dry-types (1.7.2)
       bigdecimal (~> 3.0)
       concurrent-ruby (~> 1.0)
@@ -174,7 +159,6 @@ GEM
       activesupport (>= 6.1)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
-    ice_nine (0.11.2)
     importmap-rails (2.0.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -411,7 +395,6 @@ DEPENDENCIES
   brakeman
   debug
   dotenv-rails
-  dry-system (~> 1)
   dry-validation
   importmap-rails
   pg

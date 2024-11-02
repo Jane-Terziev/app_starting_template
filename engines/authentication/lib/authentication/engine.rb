@@ -39,19 +39,9 @@ module Authentication
       app.config.paths["db/migrate"] << root.join("db/migrate")
     end
 
-    config.after_initialize do
-      Dry::System.register_provider_source(:authentication, group: :authentication) do
-        prepare do
-          register("authentication.user_repository") { Authentication::User }
-        end
-
-        start do
-          event_publisher = App::Container["events.publisher"]
-        end
-      end
-
-      App::Container.register_provider(:authentication, from: :authentication)
-      App::Container.start(:authentication) unless Rails.env.test?
-    end
+    # config.after_initialize do
+    #   event_publisher = Rails.configuration.event_publisher
+    #   event_publisher.subscribe(EventListener, to: [EventName])
+    # end
   end
 end

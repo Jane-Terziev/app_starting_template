@@ -19,18 +19,9 @@ module <%= file_name.capitalize %>
       app.config.paths["db/migrate"] << root.join("db/migrate")
     end
 
-    config.after_initialize do
-      Dry::System.register_provider_source(:<%= file_name %>, group: :<%= file_name %>) do
-        prepare do
-        end
-
-        start do
-          event_publisher = App::Container["events.publisher"]
-        end
-      end
-
-      App::Container.register_provider(:<%= file_name %>, from: :<%= file_name %>)
-      App::Container.start(:<%= file_name %>) unless Rails.env.test?
-    end
+    # config.after_initialize do
+    #   event_publisher = Rails.configuration.event_publisher
+    #   event_publisher.subscribe(EventListener, to: [EventName])
+    # end
   end
 end

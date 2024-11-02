@@ -4,6 +4,4 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   root "homes#index"
-
-  mount Authentication::Engine, at: "/authentication"
 end

@@ -1,7 +1,5 @@
 module Authentication
   class AuthenticateUser < ::ApplicationService
-    include Import[user_repository: "authentication.user_repository"]
-
     class Contract < ApplicationContract
       params do
         required(:email).value(Types::StrippedString, :filled?)
@@ -10,6 +8,11 @@ module Authentication
 
       rule(:email).validate(:email_format)
       rule(:password).validate(:password_format)
+    end
+
+    def initialize(user_repository: User)
+      self.user_repository = user_repository
+      super()
     end
 
     def call(params, warden)
@@ -21,6 +24,8 @@ module Authentication
     end
 
     private
+
+    attr_accessor :user_repository
 
     def contract
       Contract

@@ -19,7 +19,6 @@ gem "slim"
 
 # Architecture
 gem "dry-validation"
-gem "dry-system", "~> 1"
 gem "rails_event_store", "~> 2.2"
 
 group :development, :test do

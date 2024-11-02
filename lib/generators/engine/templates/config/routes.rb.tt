@@ -1,2 +1,6 @@
+Rails.application.routes.draw do
+  mount <%= file_name.capitalize %>::Engine, at: "/<%= file_name %>"
+end
+
 <%= file_name.capitalize %>::Engine.routes.draw do
 end

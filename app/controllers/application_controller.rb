@@ -1,6 +1,4 @@
 class ApplicationController < ActionController::Base
-  include Import.inject[validator: "contract_validator", current_user_repository: "current_user_repository"]
-
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -10,7 +8,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_current_user
-    current_user_repository.authenticated_identity = current_user
+    CurrentUserRepository.authenticated_identity = current_user
   end
 
   def json_request

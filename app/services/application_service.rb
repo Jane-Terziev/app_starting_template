@@ -1,5 +1,9 @@
 class ApplicationService
-  include Import[event_publisher: "events.publisher"]
+  attr_reader :event_publisher
+
+  def initialize(event_publisher: Rails.configuration.event_publisher)
+    self.event_publisher = event_publisher
+  end
 
   private
 
@@ -20,4 +24,6 @@ class ApplicationService
     event_publisher.publish_all(aggregate_root.domain_events)
     Success.new
   end
+
+  attr_writer :event_publisher
 end

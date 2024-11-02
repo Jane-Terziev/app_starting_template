@@ -1,12 +1,15 @@
 module Authentication
   class AuthorizeUser < ::ApplicationService
-    include Import[current_user_repository: "current_user_repository"]
-
     class Contract < ApplicationContract
       params do
         required(:resource).value(Types::StrippedString, :filled?)
         required(:action).value(Types::StrippedString, :filled?)
       end
+    end
+
+    def initialize(current_user_repository: CurrentUserRepository)
+      self.current_user_repository = current_user_repository
+      super()
     end
 
     def call(params)
@@ -16,6 +19,8 @@ module Authentication
     end
 
     private
+
+    attr_accessor :current_user_repository
 
     def contract
       Contract
