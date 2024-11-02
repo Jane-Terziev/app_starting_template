@@ -5,7 +5,7 @@ module Authentication
     end
 
     def create
-      result = AuthenticateUser.new.call(session_params, request.env["warden"])
+      result = AuthenticateUser.call(params: session_params, warden: request.env["warden"])
 
       respond_to do |format|
         format.turbo_stream do

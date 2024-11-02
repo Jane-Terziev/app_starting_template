@@ -1,8 +1,25 @@
 class ApplicationService
   attr_reader :event_publisher
 
-  def initialize(event_publisher: Rails.configuration.event_publisher)
+  def self.call(inject: {}, **args)
+    new(**inject).call(**args)
+
+  rescue TransactionError => e
+    log_error(e.result) if e.result.is_a?(InternalError)
+    e.result
+  end
+
+  def self.log_error(result)
+    # TODO: Implement logging, stack trace, etc.
+  end
+
+  def initialize(current_user_repository: CurrentUserRepository, event_publisher: Rails.configuration.event_publisher)
+    self.current_user_repository = current_user_repository
     self.event_publisher = event_publisher
+  end
+
+  def call(*args)
+    raise NotImplementedError, "Subclasses must implement a 'call' method"
   end
 
   private
@@ -12,11 +29,9 @@ class ApplicationService
   end
 
   def validate_params(params)
-    result = contract.new.call(params)
-
-    return Failure.new(error: ValidationError.new(params: result.to_h, errors: result.errors.to_h)) if result.failure?
-
-    @sanitized_params = result.to_h
+    contract.new.call(params)
+            .tap { return Failure.new(error: ValidationError.new(params: _1.to_h, errors: _1.errors.to_h)) if _1.failure? }
+            .tap { @sanitized_params = _1.to_h }
     Success.new
   end
 
@@ -25,5 +40,5 @@ class ApplicationService
     Success.new
   end
 
-  attr_writer :event_publisher
+  attr_writer :event_publisher, :current_user_repository
 end

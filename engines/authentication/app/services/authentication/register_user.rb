@@ -20,25 +20,21 @@ module Authentication
       end
     end
 
-    def initialize(user_repository: User)
+    def initialize(user_repository: User, **args)
+      super(**args)
       self.user_repository = user_repository
-      super()
     end
 
-    def call(params, warden)
+    def call(params:, warden:)
       ActiveRecord::Base.transaction do
-        result = validate_params(params)
-                   .and_then { verify_email_not_taken }
-                   .and_then { create_user }
-                   .and_then { set_session(warden) }
+        validate_params(params)
+          .and_then { verify_email_not_taken }
+          .and_then { create_user }
+          .and_then { set_session(warden) }
+          .tap { raise TransactionError.new(_1) if _1.failure? }
+      end
 
-        raise TransactionError.new(result) if result.failure?
-
-        result
-      end.and_then { publish_all(@user) }
-
-    rescue TransactionError => e
-      e.result
+      publish_all(@user)
     end
 
     private
@@ -50,7 +46,7 @@ module Authentication
     end
 
     def verify_email_not_taken
-      return Failure.new(error: "User already exists.") if user_repository.exists?(email: @sanitized_params[:email])
+      return Failure.new(error: ErrorMessage.new(message: "User already exists.")) if user_repository.exists?(email: @sanitized_params[:email])
 
       Success.new
     end
@@ -63,7 +59,9 @@ module Authentication
         last_name: @sanitized_params[:last_name]
       )
 
-      return Failure.new(error: "Could not create user. Please try again later") unless user_repository.save(@user)
+      unless user_repository.save(@user)
+        return Failure.new(error: InternalError.new(message: "Could not create user.", details: @user.errors.to_hash))
+      end
 
       Success.new
     end

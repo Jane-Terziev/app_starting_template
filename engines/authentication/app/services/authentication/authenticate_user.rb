@@ -10,12 +10,12 @@ module Authentication
       rule(:password).validate(:password_format)
     end
 
-    def initialize(user_repository: User)
+    def initialize(user_repository: User, **args)
+      super(**args)
       self.user_repository = user_repository
-      super()
     end
 
-    def call(params, warden)
+    def call(params:, warden:)
       validate_params(params)
         .and_then { find_user }
         .and_then { check_password }
@@ -34,13 +34,13 @@ module Authentication
     def find_user
       @user = user_repository.find_by(email: @sanitized_params[:email])
 
-      return Failure.new(error: "Invalid Credentials") unless @user
+      return Failure.new(error: ErrorMessage.new(message: "Invalid Credentials")) unless @user
 
       Success.new
     end
 
     def check_password
-      return Failure.new(error: "Invalid Credentials") unless @user.valid_password?(@sanitized_params[:password])
+      return Failure.new(error: ErrorMessage.new(message: "Invalid Credentials")) unless @user.valid_password?(@sanitized_params[:password])
 
       Success.new
     end
