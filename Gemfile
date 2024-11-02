@@ -10,7 +10,8 @@ gem "solid_queue" # Database backed background worker
 gem "solid_cable" # Database backed websocket notification
 
 # Frontend
-gem "sprockets-rails"
+# gem "sprockets-rails"
+gem "propshaft"
 gem "importmap-rails" # Javascript with ESM import maps
 gem "turbo-rails" # SPA
 gem "stimulus-rails" # Frontend framework

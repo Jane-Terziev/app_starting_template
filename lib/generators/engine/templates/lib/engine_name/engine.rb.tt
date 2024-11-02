@@ -4,10 +4,10 @@ module <%= file_name.capitalize %>
   class Engine < ::Rails::Engine
     isolate_namespace <%= file_name.capitalize %>
 
-    initializer "<%= file_name %>.assets.precompile" do |app|
+    initializer "<%= file_name %>.assets" do |app|
       app.config.assets.paths << root.join("app/javascript")
       app.config.assets.paths << root.join("app/assets/stylesheets")
-      app.config.assets.precompile += %w[<%= file_name %>/manifest.js]
+      app.config.assets.paths << root.join("app/assets/images")
     end
 
     initializer "<%= file_name %>.importmap", before: "importmap" do |app|

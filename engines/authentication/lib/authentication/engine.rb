@@ -24,10 +24,10 @@ module Authentication
       end
     end
 
-    initializer "authentication.assets.precompile" do |app|
-      app.config.assets.paths << root.join("app/javascript")
+    initializer "authentication.assets" do |app|
       app.config.assets.paths << root.join("app/assets/stylesheets")
-      app.config.assets.precompile += %w[authentication/manifest.js]
+      app.config.assets.paths << root.join("app/assets/images")
+      app.config.assets.paths << root.join("app/javascript")
     end
 
     initializer "authentication.importmap", before: "importmap" do |app|

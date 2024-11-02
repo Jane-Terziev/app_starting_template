@@ -31,7 +31,6 @@ class EngineGenerator < Rails::Generators::NamedBase
 
   def generate_app_files
     engine_root_path = "engines/#{file_name}"
-    template("app/assets/config/manifest.js.tt", "#{engine_root_path}/app/assets/config/#{file_name}/manifest.js")
     empty_directory("#{engine_root_path}/app/assets/stylesheets/#{file_name}")
     empty_directory("#{engine_root_path}/app/assets/images/#{file_name}")
     template("app/controllers/engine_name/application_controller.rb.tt", "#{engine_root_path}/app/controllers/#{file_name}/application_controller.rb")
