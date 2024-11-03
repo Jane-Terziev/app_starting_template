@@ -18,6 +18,10 @@ class Failure
     true
   end
 
+  def to_s
+    self.error.to_s
+  end
+
   private
 
   attr_writer :error, :status

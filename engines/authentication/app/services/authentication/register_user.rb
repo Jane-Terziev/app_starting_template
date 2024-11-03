@@ -60,7 +60,7 @@ module Authentication
       )
 
       unless user_repository.save(@user)
-        return Failure.new(error: InternalError.new(message: "Could not create user.", details: @user.errors.to_hash))
+        return Failure.new(error: InternalError.new(message: "Could not create user. #{@user.errors.full_messages.join('. ')}", details: @user.errors.full_messages))
       end
 
       Success.new

@@ -2,24 +2,37 @@ class ApplicationService
   attr_reader :event_publisher
 
   def self.call(inject: {}, **args)
-    new(**inject).call(**args)
+    service = new(**inject)
+    service.call(**args)
 
   rescue TransactionError => e
-    log_error(e.result) if e.result.is_a?(InternalError)
+    service.log_error(e) if e.result.error.is_a?(InternalError)
     e.result
   end
 
-  def self.log_error(result)
-    # TODO: Implement logging, stack trace, etc.
-  end
-
-  def initialize(current_user_repository: CurrentUserRepository, event_publisher: Rails.configuration.event_publisher)
+  def initialize(
+    current_user_repository: CurrentUserRepository,
+    event_publisher: Rails.configuration.event_publisher,
+    error_logger: NewRelic::Agent
+  )
     self.current_user_repository = current_user_repository
     self.event_publisher = event_publisher
+    self.error_logger = error_logger
   end
 
   def call(*args)
     raise NotImplementedError, "Subclasses must implement a 'call' method"
+  end
+
+  def log_error(exception)
+    message = <<~Message
+      #{self.class.name} failed.
+      Error Type: #{exception.result.error.class}
+      Message: #{exception.result.error}.
+      Details: #{exception.result.error.details}
+    Message
+
+    NewRelic::Agent.notice_error(message, custom_params: { details: exception.result.error.details })
   end
 
   private
@@ -40,5 +53,5 @@ class ApplicationService
     Success.new
   end
 
-  attr_writer :event_publisher, :current_user_repository
+  attr_writer :event_publisher, :current_user_repository, :error_logger
 end

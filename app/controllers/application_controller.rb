@@ -5,6 +5,22 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!, :set_current_user
 
+  rescue_from(StandardError) do |e|
+    NewRelic::Agent.notice_error(e)
+    message = "Something went wrong. Please refresh and try again. If the issue persists, please contact support."
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "snackbarContainer",
+          partial: "shared/snackbar",
+          locals: { flash: { error: message } }
+        ), status: 500
+      end
+      format.html { redirect_to request.referer, error: message, status: 500 }
+      format.json { render json: { message: message }, status: 500 }
+    end
+  end
+
   private
 
   def set_current_user
@@ -15,24 +31,24 @@ class ApplicationController < ActionController::Base
     request.format.json?
   end
 
-  def render_turbo_error(result:, form_id:, partial: "form")
+  def render_turbo_error(result:, form_id:, partial: "form", status: 422)
     if result.error.is_a?(ValidationError)
-      render turbo_stream: turbo_stream.replace(form_id, partial: partial, locals: { form: result.error }), status: 422
+      render turbo_stream: turbo_stream.replace(form_id, partial: partial, locals: { form: result.error }), status: status
     else
-      render turbo_stream: turbo_stream.replace("snackbarContainer", partial: "shared/snackbar", locals: { flash: { error: result.error.message } }), status: 422
+      render turbo_stream: turbo_stream.replace("snackbarContainer", partial: "shared/snackbar", locals: { flash: { error: result.error.message } }), status: status
     end
   end
 
-  def render_json_error(result:)
+  def render_json_error(result:, status: 422)
     if result.error.is_a?(ValidationError)
-      render json: { message: result.error.errors }, status: 422
+      render json: { message: result.error.errors }, status: status
     else
-      render json: { message: result.error.message }, status: 422
+      render json: { message: result.error.message }, status: status
     end
   end
 
-  def render_html_error(result:, partial:, locals: {})
+  def render_html_error(result:, partial:, locals: {}, status: 422)
     flash.now[:error] = result.error.message unless result.error.is_a?(ValidationError)
-    render partial, locals: locals, status: 422
+    render partial, locals: locals, status: status
   end
 end

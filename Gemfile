@@ -21,6 +21,9 @@ gem "slim"
 gem "dry-validation"
 gem "rails_event_store", "~> 2.2"
 
+# 3rd party integrations
+gem 'newrelic_rpm' # APM and error tracker
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false # Analysis for security vulnerabilities
