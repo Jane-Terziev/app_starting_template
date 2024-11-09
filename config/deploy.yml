@@ -25,8 +25,6 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - NEW_RELIC_LICENSE_KEY
-    - DATABASE_HOST
-    - DATABASE_NAME
     - DATABASE_USERNAME
     - DATABASE_PASSWORD
   clear:
