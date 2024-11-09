@@ -10,6 +10,7 @@ gem "solid_queue" # Database backed background worker
 gem "solid_cable" # Database backed websocket notification
 gem "kamal" # Deployment tool
 gem "thruster"
+gem "mission_control-jobs" # UI for solid queue
 
 # Frontend
 gem "propshaft"
