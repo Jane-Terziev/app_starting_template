@@ -10,7 +10,6 @@ gem "solid_queue" # Database backed background worker
 gem "solid_cable" # Database backed websocket notification
 
 # Frontend
-# gem "sprockets-rails"
 gem "propshaft"
 gem "importmap-rails" # Javascript with ESM import maps
 gem "turbo-rails" # SPA
@@ -22,7 +21,7 @@ gem "dry-validation"
 gem "rails_event_store", "~> 2.2"
 
 # 3rd party integrations
-gem 'newrelic_rpm' # APM and error tracker
+gem "newrelic_rpm" # APM and error tracker
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
