@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   skip_before_action :verify_authenticity_token, if: :json_request
 
-  before_action :authenticate_user!, :set_current_user
+  before_action :authenticate_user!
 
   rescue_from(StandardError) do |e|
     NewRelic::Agent.notice_error(e)
@@ -23,7 +23,13 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def set_current_user
+  def authenticate_user!(opts = {})
+    user = warden.authenticate(*opts)
+    unless user.present?
+      flash[:error] = "You must be signed in to perform that action."
+      redirect_to(Authentication::Engine.routes.url_helpers.new_user_session_path) and return
+    end
+
     CurrentUserRepository.authenticated_identity = current_user
   end
 

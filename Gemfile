@@ -8,6 +8,8 @@ gem "pg" # Postgres Database
 gem "solid_cache" # Database backed caching
 gem "solid_queue" # Database backed background worker
 gem "solid_cable" # Database backed websocket notification
+gem "kamal" # Deployment tool
+gem "thruster"
 
 # Frontend
 gem "propshaft"
@@ -29,6 +31,11 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false # Code lint
   gem "rspec-rails"
   gem "dotenv-rails"
+end
+
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
 end
 
 gem "bootsnap", require: false # Faster application bootup
