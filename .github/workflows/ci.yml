@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  rspec:
     runs-on: ubuntu-latest
 
     services:
@@ -39,7 +39,7 @@ jobs:
           DATABASE_NAME: app_name_test
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
-        run: bin/rails db:setup rspec
+        run: bundle exec rake db:test:prepare spec
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
