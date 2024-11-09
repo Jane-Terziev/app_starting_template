@@ -70,7 +70,7 @@ jobs:
       - name: Add SSH key
         run: |
           mkdir -p ssh
-          echo "{{ secrets.EC2_SSH_KEY}}" >> ssh/ec2-ssh-key.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" >> ssh/ec2-ssh-key.pem
 
       - name: Deploy to production with Kamal
         if: success()
