@@ -67,6 +67,11 @@ jobs:
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .kamal/secrets
           echo "NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }}" >> .kamal/secrets
 
+      - name: Add SSH key
+        run: |
+          mkdir -p ssh
+          echo "{{ secrets.EC2_SSH_KEY}}" >> ssh/ec2-ssh-key.pem
+
       - name: Deploy to production with Kamal
         if: success()
         run: ./bin/kamal deploy

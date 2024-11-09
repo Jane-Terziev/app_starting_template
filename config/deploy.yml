@@ -16,7 +16,7 @@ registry:
 
 ssh:
   user: ec2-user
-  keys: ['ec2-test-ssh-key.pem']
+  keys: ['ssh/ec2-ssh-key.pem']
 
 builder:
   arch: amd64
