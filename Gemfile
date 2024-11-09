@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.0.0.beta1"
+gem "rails", "~> 8.0"
 
 # Infrastructure
 gem "puma", ">= 5.0" # Server
