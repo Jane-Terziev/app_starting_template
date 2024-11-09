@@ -1,14 +1,14 @@
-name: CI
+name: Run pre-deploy flow
 
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches-ignore: [ main ]
 
 jobs:
-  rspec:
+  tests:
+    name: 'Run lints, audits and specs'
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
@@ -18,11 +18,7 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client libpq-dev
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -31,6 +27,18 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Scan for common Rails security vulnerabilities using static analysis
+        run: bin/brakeman --no-pager
+
+      - name: Scan for security vulnerabilities in JavaScript dependencies
+        run: bin/importmap audit
+
+      - name: Lint code for consistent style
+        run: bin/rubocop -f github
+
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client libpq-dev
 
       - name: Run RSpec
         env:

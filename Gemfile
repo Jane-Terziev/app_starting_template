@@ -40,7 +40,7 @@ end
 
 gem "bootsnap", require: false # Faster application bootup
 gem "tzinfo-data", platforms: %i[ windows jruby ] # Windows does not include zoneinfo files, so bundle tzinfo-data gem
-gem "psych", "~> 3.3" # https://bugs.ruby-lang.org/issues/17866
+gem "psych", "~> 5.2" # https://bugs.ruby-lang.org/issues/17866
 
 # Engines
 gem "authentication", path: "engines/authentication"
