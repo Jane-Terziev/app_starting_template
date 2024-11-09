@@ -1,4 +1,4 @@
-class EngineGenerator < Rails::Generators::NamedBase
+class Generators::Engine::EngineGenerator < Rails::Generators::NamedBase
   source_root File.expand_path("templates", __dir__)
 
   def generate_root_files

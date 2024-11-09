@@ -1,5 +1,5 @@
 common: &default_settings
-  license_key: <%= ENV.fetch('NEW_RELIC_LICENSE_KEY') %>
+  license_key: <%= ENV.fetch('NEW_RELIC_LICENSE_KEY', '') %>
   app_name: 'AppName'
 
   distributed_tracing:
