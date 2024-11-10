@@ -37,9 +37,9 @@ module Authentication
     private
 
     def verify_email_not_taken
-      return Failure.new(error: ErrorMessage.new(message: "User already exists.")) if user_repository.exists?(email: @sanitized_params[:email])
+      return Success.new unless user_repository.exists?(email: @sanitized_params[:email])
 
-      Success.new
+      Failure.new(error: ErrorMessage.new(message: "User already exists."))
     end
 
     def create_user
@@ -50,11 +50,10 @@ module Authentication
         last_name: @sanitized_params[:last_name]
       )
 
-      unless user_repository.save(@user)
-        return Failure.new(error: InternalError.new(message: "Could not create user. #{@user.errors.full_messages.join('. ')}", details: @user.errors.full_messages))
-      end
+      return Success.new if user_repository.save(@user)
 
-      Success.new
+      message = "Could not create user. #{@user.errors.full_messages.join('. ')}"
+      Failure.new(error: InternalError.new(message: message, details: @user.errors.full_messages))
     end
 
     def set_session(warden)

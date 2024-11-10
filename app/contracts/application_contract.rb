@@ -1,11 +1,10 @@
 class ApplicationContract < Dry::Validation::Contract
-  attr_accessor :errors, :params, :result
+  attr_accessor :errors, :params
 
-  def initialize(errors: {}, params: {}, result: nil)
+  def initialize(errors: {}, params: {})
     super()
     self.errors = errors
     self.params = params
-    self.result = result
   end
 
   register_macro(:email_format) do

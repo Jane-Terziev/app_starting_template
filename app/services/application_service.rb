@@ -1,7 +1,13 @@
 class ApplicationService
   include Injector
 
-  inject_dependencies({ current_user_repository: CurrentUserRepository, event_publisher: ActiveSupport::Notifications })
+  inject_dependencies(
+    {
+      current_user_repository: CurrentUserRepository,
+      event_publisher: ActiveSupport::Notifications,
+      exception_logger: NewRelic::Agent
+    }
+  )
 
   def self.call(**args)
     new.call(**args)
@@ -15,7 +21,7 @@ class ApplicationService
       Details: #{exception.result.error.details}
     Message
 
-    NewRelic::Agent.notice_error(message, custom_params: { details: exception.result.error.details })
+    exception_logger.notice_error(message, custom_params: { details: exception.result.error.details })
   end
 
   def call(**args)
@@ -28,16 +34,17 @@ class ApplicationService
   private
 
   def validate_params(params)
-    self.class.const_get(:Contract).new.call(params)
-            .tap { return Failure.new(error: ValidationError.new(params: _1.to_h, errors: _1.errors.to_h)) if _1.failure? }
-            .tap { @sanitized_params = _1.to_h }
+    self.class.const_get(:Contract).new
+        .call(params)
+        .tap { return Failure.new(error: ValidationError.new(params: _1.to_h, errors: _1.errors.to_h)) if _1.failure? }
+        .tap { @sanitized_params = _1.to_h }
     Success.new
   end
 
   def publish_all(aggregate_root)
-    current_user_id = current_user_repository.authenticated_identity&.id
+    user_id = current_user_repository.authenticated_identity&.id
     aggregate_root.domain_events.each do
-      ActiveSupport::Notifications.publish(_1[:event_name], _1[:payload].merge(current_user_id: current_user_id))
+      event_publisher.publish(_1[:event_name], _1[:payload].merge(current_user_id: user_id))
     end
     Success.new
   end

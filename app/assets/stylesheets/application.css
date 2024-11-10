@@ -76,23 +76,6 @@ body.light {
     --surface-container-highest:#e2e2e5;
 }
 
-img.circle {
-    object-fit: fill;
-    min-width: 100px;
-    min-height: 100px;
-}
-
-
-.responsive table {
-    width: 100%;
-    table-layout: fixed;
-}
-
-.responsive th, td {
-    text-align: center;
-    padding: 8px;
-}
-
 .truncate-text {
     display: -webkit-box;           /* Required for the ellipsis effect */
     -webkit-line-clamp: 2;          /* Number of lines to display before truncating */

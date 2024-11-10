@@ -31,9 +31,9 @@ module Authentication
     end
 
     def check_password
-      return Failure.new(error: ErrorMessage.new(message: "Invalid Credentials")) unless @user.valid_password?(@sanitized_params[:password])
+      return Success.new if @user.valid_password?(@sanitized_params[:password])
 
-      Success.new
+      Failure.new(error: ErrorMessage.new(message: "Invalid Credentials"))
     end
 
     def set_session(warden)
