@@ -7,10 +7,12 @@ module Authentication
       end
     end
 
+    inject_dependencies({ user_permission_repository: UserPermission })
+
     def run(params:)
       validate_params(params)
         .and_then { find_user }
-        .and_then { check_permissions }
+        .and_then { check_permission }
     end
 
     private
@@ -22,13 +24,18 @@ module Authentication
       Success.new
     end
 
-    def check_permissions
-      return Failure.new(error: ErrorMessage.new(message: "User not authorized to perform the action.")) unless @user.has_permission?(
-        resource: @sanitized_params[:resource],
-        action: @sanitized_params[:action]
-      )
+    def check_permission
+      return Success.new if user_permission_exists?
 
-      Success.new
+      Failure.new(error: ErrorMessage.new(message: "User not authorized to perform the action."))
+    end
+
+    def user_permission_exists?
+      user_permission_repository
+        .joins(:permission)
+        .where(permission: { action: @sanitized_params[:action], resource: @sanitized_params[:resource] })
+        .where(user_id: @user.id)
+        .exists?
     end
   end
 end
