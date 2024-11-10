@@ -1,6 +1,8 @@
 ARG RUBY_VERSION=3.3.4
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
+ENV BUNDLER_VERSION=2.5.21
+
 WORKDIR /app_name
 
 # Install base packages
@@ -24,7 +26,7 @@ RUN apt-get update -qq && \
 COPY . .
 
 RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    rm -rf "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
 # Precompile bootsnap code for faster boot times
