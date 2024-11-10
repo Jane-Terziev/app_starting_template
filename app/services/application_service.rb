@@ -1,28 +1,15 @@
 class ApplicationService
-  def self.call(inject: {}, **args)
-    service = new(**inject)
-    service.call(**args)
+  include Injector
 
-  rescue TransactionError => e
-    service.log_error(e) if e.result.error.is_a?(InternalError)
-    e.result
+  inject_dependencies({ current_user_repository: CurrentUserRepository, event_publisher: ActiveSupport::Notifications })
+
+  def self.call(**args)
+    new.call(**args)
   end
 
-  def initialize(
-    current_user_repository: CurrentUserRepository,
-    error_logger: NewRelic::Agent
-  )
-    self.current_user_repository = current_user_repository
-    self.error_logger = error_logger
-  end
-
-  def call(*args)
-    raise NotImplementedError, "Subclasses must implement a 'call' method"
-  end
-
-  def log_error(exception)
+  def self.log_error(exception)
     message = <<~Message
-      #{self.class.name} failed.
+      #{self.name} failed.
       Error Type: #{exception.result.error.class}
       Message: #{exception.result.error}.
       Details: #{exception.result.error.details}
@@ -31,10 +18,17 @@ class ApplicationService
     NewRelic::Agent.notice_error(message, custom_params: { details: exception.result.error.details })
   end
 
+  def call(**args)
+    run(**args)
+  rescue TransactionError => e
+    log_error(e) if e.result.error.is_a?(InternalError)
+    e.result
+  end
+
   private
 
   def contract
-    raise StandardError.new("undefined method contract")
+    raise NotImplementedError, "Subclasses must implement a 'contract' method"
   end
 
   def validate_params(params)
@@ -45,8 +39,10 @@ class ApplicationService
   end
 
   def publish_all(aggregate_root)
+    current_user_id = current_user_repository.authenticated_identity&.id
+    aggregate_root.domain_events.each do
+      ActiveSupport::Notifications.publish(_1[:event_name], _1[:payload].merge(current_user_id: current_user_id))
+    end
     Success.new
   end
-
-  attr_writer :current_user_repository, :error_logger
 end

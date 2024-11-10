@@ -7,11 +7,7 @@ module Authentication
       end
     end
 
-    def initialize(**args)
-      super(**args)
-    end
-
-    def call(params:)
+    def run(params:)
       validate_params(params)
         .and_then { find_user }
         .and_then { check_permissions }

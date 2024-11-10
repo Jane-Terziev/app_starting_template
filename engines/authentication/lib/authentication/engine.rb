@@ -39,7 +39,10 @@ module Authentication
       app.config.paths["db/migrate"] << root.join("db/migrate")
     end
 
-    # config.after_initialize do
-    # end
+    config.after_initialize do
+      # ActiveSupport::Notifications.subscribe("event_name") do |_name, payload|
+      #   Authentication::SomeJob.perform_later(payload)
+      # end
+    end
   end
 end

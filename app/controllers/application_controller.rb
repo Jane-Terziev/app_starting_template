@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from(StandardError) do |e|
     NewRelic::Agent.notice_error(e)
+    Rails.logger.error(e)
     message = "Something went wrong. Please refresh and try again. If the issue persists, please contact support."
     respond_to do |format|
       format.turbo_stream do

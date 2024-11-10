@@ -10,12 +10,9 @@ module Authentication
       rule(:password).validate(:password_format)
     end
 
-    def initialize(user_repository: User, **args)
-      super(**args)
-      self.user_repository = user_repository
-    end
+    inject_dependencies({ user_repository: User })
 
-    def call(params:, warden:)
+    def run(params:, warden:)
       validate_params(params)
         .and_then { find_user }
         .and_then { check_password }
@@ -24,8 +21,6 @@ module Authentication
     end
 
     private
-
-    attr_accessor :user_repository
 
     def contract
       Contract

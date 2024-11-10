@@ -20,12 +20,9 @@ module Authentication
       end
     end
 
-    def initialize(user_repository: User, **args)
-      super(**args)
-      self.user_repository = user_repository
-    end
+    inject_dependencies({ user_repository: User })
 
-    def call(params:, warden:)
+    def run(params:, warden:)
       ActiveRecord::Base.transaction do
         validate_params(params)
           .and_then { verify_email_not_taken }
@@ -38,8 +35,6 @@ module Authentication
     end
 
     private
-
-    attr_accessor :user_repository
 
     def contract
       Contract

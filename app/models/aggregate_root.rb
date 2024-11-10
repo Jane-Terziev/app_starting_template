@@ -5,8 +5,8 @@ class AggregateRoot < ApplicationRecord
     @domain_events ||= []
   end
 
-  def apply_event(event)
-    domain_events << event
+  def apply_event(event_name:, payload: {})
+    domain_events << { event_name: event_name, payload: payload }
     self.updated_at = DateTime.now
   end
 
