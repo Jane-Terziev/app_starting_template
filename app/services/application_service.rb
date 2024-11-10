@@ -1,6 +1,4 @@
 class ApplicationService
-  attr_reader :event_publisher
-
   def self.call(inject: {}, **args)
     service = new(**inject)
     service.call(**args)
@@ -12,11 +10,9 @@ class ApplicationService
 
   def initialize(
     current_user_repository: CurrentUserRepository,
-    event_publisher: Rails.configuration.event_publisher,
     error_logger: NewRelic::Agent
   )
     self.current_user_repository = current_user_repository
-    self.event_publisher = event_publisher
     self.error_logger = error_logger
   end
 
@@ -49,9 +45,8 @@ class ApplicationService
   end
 
   def publish_all(aggregate_root)
-    event_publisher.publish_all(aggregate_root.domain_events)
     Success.new
   end
 
-  attr_writer :event_publisher, :current_user_repository, :error_logger
+  attr_writer :current_user_repository, :error_logger
 end

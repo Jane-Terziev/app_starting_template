@@ -40,8 +40,6 @@ module Authentication
     end
 
     # config.after_initialize do
-    #   event_publisher = Rails.configuration.event_publisher
-    #   event_publisher.subscribe(EventListener, to: [EventName])
     # end
   end
 end

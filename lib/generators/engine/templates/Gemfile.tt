@@ -4,7 +4,6 @@ gemspec
 
 # Architecture
 gem "dry-validation"
-gem "rails_event_store", "~> 2.2"
 
 # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
 gem "rubocop-rails-omakase", require: false

@@ -21,7 +21,6 @@ gem "slim"
 
 # Architecture
 gem "dry-validation"
-gem "rails_event_store", "~> 2.2"
 
 # 3rd party integrations
 gem "newrelic_rpm" # APM and error tracker
