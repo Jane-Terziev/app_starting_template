@@ -22,10 +22,6 @@ module Authentication
 
     private
 
-    def contract
-      Contract
-    end
-
     def find_user
       @user = user_repository.find_by(email: @sanitized_params[:email])
 

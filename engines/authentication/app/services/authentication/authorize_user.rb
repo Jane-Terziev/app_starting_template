@@ -15,10 +15,6 @@ module Authentication
 
     private
 
-    def contract
-      Contract
-    end
-
     def find_user
       @user = current_user_repository.authenticated_identity
       return Failure.new(error: ErrorMessage.new(message: "Please sign in before continuing.")) unless @user

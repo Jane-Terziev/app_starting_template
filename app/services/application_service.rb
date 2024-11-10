@@ -27,12 +27,8 @@ class ApplicationService
 
   private
 
-  def contract
-    raise NotImplementedError, "Subclasses must implement a 'contract' method"
-  end
-
   def validate_params(params)
-    contract.new.call(params)
+    self.class.const_get(:Contract).new.call(params)
             .tap { return Failure.new(error: ValidationError.new(params: _1.to_h, errors: _1.errors.to_h)) if _1.failure? }
             .tap { @sanitized_params = _1.to_h }
     Success.new

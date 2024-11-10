@@ -36,10 +36,6 @@ module Authentication
 
     private
 
-    def contract
-      Contract
-    end
-
     def verify_email_not_taken
       return Failure.new(error: ErrorMessage.new(message: "User already exists.")) if user_repository.exists?(email: @sanitized_params[:email])
 
