@@ -2,7 +2,7 @@ module Authentication
   class RegisterUser < ::ApplicationService
     class Validator < ApplicationValidator
       attribute :email
-      validates :email, presence: true, format: { with: EMAIL_REGEX, message: EMAIL_ERROR_MESSAGE }
+      validates :email, presence: true, format: { with: EMAIL_REGEX, message: "is in invalid format." }
 
       attribute :password
       validates :password, confirmation: true, presence: true, length: { minimum: 5 }
