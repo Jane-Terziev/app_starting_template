@@ -16,18 +16,17 @@ class ApplicationService
   def self.log_error(exception)
     message = <<~Message
       #{self.name} failed.
-      Error Type: #{exception.result.error.class}
-      Message: #{exception.result.error}.
-      Details: #{exception.result.error.details}
+      #{exception.result.error_class ? "Error Type: #{exception.result.error_class}" : ""}
+      Message: #{exception.result.message}.
     Message
 
-    exception_logger.notice_error(message, custom_params: { details: exception.result.error.details })
+    exception_logger.notice_error(message)
   end
 
   def call(**args)
     run(**args)
   rescue TransactionError => e
-    log_error(e) if e.result.error.is_a?(InternalError)
+    log_error(e) if e.result.error_class.eql?(InternalError)
     e.result
   end
 
@@ -35,7 +34,7 @@ class ApplicationService
 
   def validate_params(params)
     self.class.const_get(:Validator).new(params)
-        .tap { return Failure.new(error: ValidationError.new(validator: _1)) unless _1.valid? }
+        .tap { return Failure.new(message: _1, error_class: ValidationError) unless _1.valid? }
         .tap { @validator = _1 }
     Success.new
   end

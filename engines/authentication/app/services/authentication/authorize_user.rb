@@ -20,7 +20,7 @@ module Authentication
 
     def find_user
       @user = current_user_repository.authenticated_identity
-      return Failure.new(error: ErrorMessage.new(message: "Please sign in before continuing.")) unless @user
+      return Failure.new(message: "Please sign in before continuing.") unless @user
 
       Success.new
     end
@@ -28,7 +28,7 @@ module Authentication
     def check_permission
       return Success.new if user_permission_exists?
 
-      Failure.new(error: ErrorMessage.new(message: "User not authorized to perform the action."))
+      Failure.new(message: "User not authorized to perform the action.")
     end
 
     def user_permission_exists?

@@ -1,12 +1,13 @@
 class Failure
-  attr_reader :error, :status
+  attr_reader :message, :error_class, :status
 
-  def initialize(error:, status: 422)
-    self.error = error
+  def initialize(message:, error_class: nil, status: 422)
+    self.message = message
+    self.error_class = error_class
     self.status = status
   end
 
-  def and_then(&block)
+  def and_then(&_block)
     self
   end
 
@@ -19,10 +20,10 @@ class Failure
   end
 
   def to_s
-    self.error.to_s
+    self.message
   end
 
   private
 
-  attr_writer :error, :status
+  attr_writer :message, :error_class, :status
 end

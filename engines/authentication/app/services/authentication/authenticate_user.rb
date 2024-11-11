@@ -23,7 +23,7 @@ module Authentication
     def find_user
       @user = user_repository.find_by(email: @validator.email)
 
-      return Failure.new(error: ErrorMessage.new(message: "Invalid Credentials")) unless @user
+      return Failure.new(message: "Invalid Credentials") unless @user
 
       Success.new
     end
@@ -31,7 +31,7 @@ module Authentication
     def check_password
       return Success.new if @user.valid_password?(@validator.password)
 
-      Failure.new(error: ErrorMessage.new(message: "Invalid Credentials"))
+      Failure.new(message: "Invalid Credentials")
     end
 
     def set_session(warden)

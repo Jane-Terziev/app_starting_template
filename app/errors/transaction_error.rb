@@ -3,6 +3,5 @@ class TransactionError < StandardError
 
   def initialize(result:)
     @result = result
-    super("Transaction failed with result: #{result}")
   end
 end

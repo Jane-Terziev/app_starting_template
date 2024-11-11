@@ -14,7 +14,7 @@ module Authentication
         end
 
         format.html do
-          render_html_error(result: result, partial: :new, locals: { form: result.error }) and return if result.failure?
+          render_html_error(result: result, partial: :new) and return if result.failure?
           redirect_to main_app.root_path, success: "Successfully signed in!"
         end
 
