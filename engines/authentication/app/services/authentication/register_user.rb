@@ -22,7 +22,7 @@ module Authentication
           .and_then { verify_email_not_taken }
           .and_then { create_user }
           .and_then { set_session(warden) }
-          .tap { raise TransactionError.new(_1) if _1.failure? }
+          .tap { raise TransactionError.new(result: _1) if _1.failure? }
       end
 
       publish_all(@user)

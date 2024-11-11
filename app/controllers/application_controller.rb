@@ -50,14 +50,18 @@ class ApplicationController < ActionController::Base
 
   def render_json_error(result:, status: 422)
     if result.error.is_a?(ValidationError)
-      render json: { message: result.error.errors }, status: status
+      render json: { message: result.error.errors.to_hash }, status: status
     else
       render json: { message: result.error.message }, status: status
     end
   end
 
   def render_html_error(result:, partial:, locals: {}, status: 422)
-    flash.now[:error] = result.error.message unless result.error.is_a?(ValidationError)
+    if result.error.is_a?(ValidationError)
+      locals[:form] = result.error.validator
+    else
+      flash.now[:error] = result.error.message
+    end
     render partial, locals: locals, status: status
   end
 end
