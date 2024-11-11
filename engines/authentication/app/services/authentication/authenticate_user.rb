@@ -1,13 +1,11 @@
 module Authentication
   class AuthenticateUser < ::ApplicationService
-    class Contract < ApplicationContract
-      params do
-        required(:email).value(Types::StrippedString, :filled?)
-        required(:password).value(Types::StrippedString, :filled?)
-      end
+    class Validator < ApplicationValidator
+      attribute :email
+      validates :email, presence: true, format: { with: EMAIL_REGEX, message: "is in invalid format." }
 
-      rule(:email).validate(:email_format)
-      rule(:password).validate(:password_format)
+      attribute :password
+      validates :password, presence: true, length: { minimum: 5, message: "must be longer than 5 characters." }
     end
 
     inject_dependencies({ user_repository: User })
@@ -23,7 +21,7 @@ module Authentication
     private
 
     def find_user
-      @user = user_repository.find_by(email: @sanitized_params[:email])
+      @user = user_repository.find_by(email: @validator.email)
 
       return Failure.new(error: ErrorMessage.new(message: "Invalid Credentials")) unless @user
 
@@ -31,7 +29,7 @@ module Authentication
     end
 
     def check_password
-      return Success.new if @user.valid_password?(@sanitized_params[:password])
+      return Success.new if @user.valid_password?(@validator.password)
 
       Failure.new(error: ErrorMessage.new(message: "Invalid Credentials"))
     end

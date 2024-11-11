@@ -1,10 +1,11 @@
 module Authentication
   class AuthorizeUser < ::ApplicationService
-    class Contract < ApplicationContract
-      params do
-        required(:resource).value(Types::StrippedString, :filled?)
-        required(:action).value(Types::StrippedString, :filled?)
-      end
+    class Validator < ApplicationValidator
+      attribute :resource
+      validates :resource, presence: true
+
+      attribute :action
+      validates :action, presence: true
     end
 
     inject_dependencies({ user_permission_repository: UserPermission })
@@ -33,7 +34,7 @@ module Authentication
     def user_permission_exists?
       user_permission_repository
         .joins(:permission)
-        .where(permission: { action: @sanitized_params[:action], resource: @sanitized_params[:resource] })
+        .where(permission: { action: @validator.action, resource: @validator.resource })
         .where(user_id: @user.id)
         .exists?
     end

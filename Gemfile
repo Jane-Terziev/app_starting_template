@@ -19,9 +19,6 @@ gem "turbo-rails" # SPA
 gem "stimulus-rails" # Frontend framework
 gem "slim"
 
-# Architecture
-gem "dry-validation"
-
 # 3rd party integrations
 gem "newrelic_rpm" # APM and error tracker
 

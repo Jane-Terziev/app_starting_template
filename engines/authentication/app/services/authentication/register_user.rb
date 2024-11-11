@@ -1,23 +1,17 @@
 module Authentication
   class RegisterUser < ::ApplicationService
-    class Contract < ApplicationContract
-      params do
-        required(:email).value(Types::StrippedString, :filled?)
-        required(:password).value(Types::StrippedString, :filled?)
-        required(:password_confirmation).value(Types::StrippedString, :filled?)
-        required(:first_name).value(Types::StrippedString, :filled?)
-        required(:last_name).value(Types::StrippedString, :filled?)
-      end
+    class Validator < ApplicationValidator
+      attribute :email
+      validates :email, presence: true, format: { with: EMAIL_REGEX, message: EMAIL_ERROR_MESSAGE }
 
-      rule(:email).validate(:email_format)
-      rule(:password).validate(:password_format)
+      attribute :password
+      validates :password, confirmation: true, presence: true, length: { minimum: 5 }
 
-      rule(:password, :password_confirmation) do
-        if values[:password] != values[:password_confirmation]
-          key(:password).failure("must match with password confirmation")
-          key(:password_confirmation).failure("must match with password")
-        end
-      end
+      attribute :first_name
+      validates :first_name, presence: true
+
+      attribute :last_name
+      validates :last_name, presence: true
     end
 
     inject_dependencies({ user_repository: User })
@@ -37,17 +31,17 @@ module Authentication
     private
 
     def verify_email_not_taken
-      return Success.new unless user_repository.exists?(email: @sanitized_params[:email])
+      return Success.new unless user_repository.exists?(email: @validator.email)
 
       Failure.new(error: ErrorMessage.new(message: "User already exists."))
     end
 
     def create_user
       @user = user_repository.create_new(
-        email: @sanitized_params[:email],
-        password: @sanitized_params[:password],
-        first_name: @sanitized_params[:first_name],
-        last_name: @sanitized_params[:last_name]
+        email: @validator.email,
+        password: @validator.password,
+        first_name: @validator.first_name,
+        last_name: @validator.last_name
       )
 
       return Success.new if user_repository.save(@user)

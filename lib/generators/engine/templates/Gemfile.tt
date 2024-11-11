@@ -2,8 +2,5 @@ source "https://rubygems.org"
 
 gemspec
 
-# Architecture
-gem "dry-validation"
-
 # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
 gem "rubocop-rails-omakase", require: false

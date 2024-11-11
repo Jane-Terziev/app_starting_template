@@ -34,10 +34,9 @@ class ApplicationService
   private
 
   def validate_params(params)
-    self.class.const_get(:Contract).new
-        .call(params)
-        .tap { return Failure.new(error: ValidationError.new(params: _1.to_h, errors: _1.errors.to_h)) if _1.failure? }
-        .tap { @sanitized_params = _1.to_h }
+    self.class.const_get(:Validator).new(params)
+        .tap { return Failure.new(error: ValidationError.new(validator: _1)) unless _1.valid? }
+        .tap { @validator = _1 }
     Success.new
   end
 

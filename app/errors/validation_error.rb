@@ -1,8 +1,7 @@
 class ValidationError
-  attr_accessor :params, :errors
+  attr_accessor :validator
 
-  def initialize(params: {}, errors: {})
-    self.params = params.with_indifferent_access
-    self.errors = errors.with_indifferent_access
+  def initialize(validator:)
+    self.validator = validator
   end
 end

@@ -1,7 +1,7 @@
 module Authentication
   class SessionsController < ApplicationController
     def new
-      render :new, locals: { form: AuthenticateUser::Contract.new }
+      render :new, locals: { form: AuthenticateUser::Validator.new }
     end
 
     def create
