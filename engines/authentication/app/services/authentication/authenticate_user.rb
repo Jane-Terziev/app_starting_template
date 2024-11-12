@@ -16,7 +16,6 @@ module Authentication
         .and_then { find_user }
         .and_then { check_password }
         .and_then { set_session(warden) }
-        .and_then { publish_events }
     end
 
     private

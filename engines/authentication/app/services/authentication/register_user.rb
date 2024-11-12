@@ -14,16 +14,9 @@ module Authentication
     inject_dependencies({ user_repository: User })
 
     def run(params:, warden:)
-      result = validate_params(params)
-                 .and_then { verify_email_not_taken }
-
-      ActiveRecord::Base.transaction do
-        result
-          .and_then { create_user }
-          .tap { result = _1; raise ActiveRecord::Rollback if _1.failure? }
-      end
-
-      result
+      validate_params(params)
+        .and_then { verify_email_not_taken }
+        .and_then { create_user }
         .and_then { set_session(warden) }
         .and_then { publish_events }
     end
