@@ -9,41 +9,60 @@ class ApplicationService
     }
   )
 
+  def domain_events
+    @domain_events ||= []
+  end
+
+  def apply_event(event_name:, payload: {})
+    domain_events << { event_name: event_name, payload: payload }
+  end
+
+  attr_writer :domain_events
+
   def self.call(**args)
     new.call(**args)
   end
 
-  def self.log_error(exception)
-    message = <<~Message
-      #{self.name} failed.
-      #{exception.result.error_class ? "Error Type: #{exception.result.error_class}" : ""}
-      Message: #{exception.result.message}.
-    Message
+  def log_error(result)
+    exception_logger.notice_error(
+      fetch_service_error_class.new(result),
+      custom_params: { internal_details: result.error.internal_details }
+    )
+  end
 
-    exception_logger.notice_error(message)
+  def fetch_service_error_class
+    return "#{self.class.name}Error".constantize if Object.const_defined?("#{self.class.name}Error")
+
+    "#{self.class.name.gsub(("::" + self.class.name.demodulize), "")}".constantize.const_set(
+      "#{self.class.name.demodulize}Error",
+      Class.new(StandardError) do
+        attr_accessor :backtrace
+        def initialize(result)
+          super("#{result.error.message} #{result.error.internal_details}")
+          self.backtrace = result.error.backtrace
+        end
+      end
+    )
   end
 
   def call(**args)
-    run(**args)
-  rescue TransactionError => e
-    log_error(e) if e.result.error_class.eql?(InternalError)
-    e.result
+    result = run(**args)
+    log_error(result) if result.failure? && result.error.is_a?(InternalError)
+    result
   end
 
   private
 
   def validate_params(params)
     self.class.const_get(:Validator).new(params)
-        .tap { return Failure.new(message: _1, error_class: ValidationError) unless _1.valid? }
+        .tap { return Failure.new(error: ValidationError.new(validator: _1)) unless _1.valid? }
         .tap { @validator = _1 }
     Success.new
   end
 
-  def publish_all(aggregate_root)
+  def publish_events
     user_id = current_user_repository.authenticated_identity&.id
-    aggregate_root.domain_events.each do
-      event_publisher.publish(_1[:event_name], _1[:payload].merge(current_user_id: user_id))
-    end
+    domain_events.each { event_publisher.publish(_1[:event_name], _1[:payload].merge(current_user_id: user_id)) }
     Success.new
   end
 end

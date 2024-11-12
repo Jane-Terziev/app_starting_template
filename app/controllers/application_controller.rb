@@ -41,23 +41,27 @@ class ApplicationController < ActionController::Base
   end
 
   def render_turbo_error(result:, form_id:, partial: "form", status: 422)
-    if result.error_class.eql?(ValidationError)
-      render turbo_stream: turbo_stream.replace(form_id, partial: partial, locals: { form: result.message }), status: status
+    if result.error.is_a?(ValidationError)
+      render turbo_stream: turbo_stream.replace(form_id, partial: partial, locals: { form: result.error.validator }), status: status
     else
-      render turbo_stream: turbo_stream.replace("snackbarContainer", partial: "shared/snackbar", locals: { flash: { error: result.message } }), status: status
+      render turbo_stream: turbo_stream.replace("snackbarContainer", partial: "shared/snackbar", locals: { flash: { error: result.error.message } }), status: status
     end
   end
 
   def render_json_error(result:, status: 422)
-    if result.error_class.eql?(ValidationError)
-      render json: { message: result.message.errors.to_hash }, status: status
+    if result.error.is_a?(ValidationError)
+      render json: { message: result.error.validator.errors.to_hash }, status: status
     else
-      render json: { message: result.message }, status: status
+      render json: { message: result.error.message }, status: status
     end
   end
 
   def render_html_error(result:, partial:, locals: {}, status: 422)
-    result.error_class.eql?(ValidationError) ? locals[:form] = result.message : flash.now[:error] = result.message
+    if result.error.is_a?(ValidationError)
+      locals[:form] = result.error.validator
+    else
+      flash.now[:error] = result.error.message
+    end
     render partial, locals: locals, status: status
   end
 end

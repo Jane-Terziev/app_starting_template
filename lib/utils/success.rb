@@ -1,8 +1,8 @@
 class Success
   attr_reader :result
 
-  def initialize(input: nil)
-    self.result = input
+  def initialize(result: {})
+    self.result = result
   end
 
   def and_then(&block)

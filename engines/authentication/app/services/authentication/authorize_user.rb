@@ -1,11 +1,10 @@
 module Authentication
   class AuthorizeUser < ::ApplicationService
     class Validator < ApplicationValidator
-      attribute :resource
-      validates :resource, presence: true
+      attribute :resource, :string
+      attribute :action, :string
 
-      attribute :action
-      validates :action, presence: true
+      validates :resource, :action, presence: true
     end
 
     inject_dependencies({ user_permission_repository: UserPermission })
@@ -20,7 +19,7 @@ module Authentication
 
     def find_user
       @user = current_user_repository.authenticated_identity
-      return Failure.new(message: "Please sign in before continuing.") unless @user
+      return Failure.new(error: ServiceError.new(message: "Please sign in before continuing.")) unless @user
 
       Success.new
     end
@@ -28,7 +27,7 @@ module Authentication
     def check_permission
       return Success.new if user_permission_exists?
 
-      Failure.new(message: "User not authorized to perform the action.")
+      Failure.new(error: ServiceError.new(message: "User not authorized to perform the action."))
     end
 
     def user_permission_exists?

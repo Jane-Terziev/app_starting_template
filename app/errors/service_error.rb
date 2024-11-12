@@ -1,0 +1,2 @@
+class ServiceError < ApplicationError
+end
