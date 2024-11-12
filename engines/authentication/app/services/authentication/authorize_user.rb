@@ -19,7 +19,7 @@ module Authentication
     private
 
     def find_user
-      @user = current_user_repository.authenticated_identity
+      @user = current_user_repository.user
       return Failure.new(error: ServiceError.new(message: "Please sign in before continuing.")) unless @user
 
       Success.new

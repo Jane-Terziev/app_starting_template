@@ -55,5 +55,3 @@ module ApplicationValidator
     errors.add(attr_name, "can't be blank") if value.nil? || (value.is_a?(String) && value.strip.empty?)
   end
 end
-
-

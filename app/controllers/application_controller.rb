@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
       redirect_to(Authentication::Engine.routes.url_helpers.new_user_session_path) and return
     end
 
-    CurrentUserRepository.authenticated_identity = current_user
+    CurrentUserRepository.user = current_user
   end
 
   def json_request

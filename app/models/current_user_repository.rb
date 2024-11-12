@@ -1,3 +1,3 @@
 class CurrentUserRepository < ActiveSupport::CurrentAttributes
-  attribute :authenticated_identity
+  attribute :user
 end

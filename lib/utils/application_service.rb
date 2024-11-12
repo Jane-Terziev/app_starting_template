@@ -37,7 +37,7 @@ module ApplicationService
   end
 
   def publish_events
-    user_id = current_user_repository.authenticated_identity&.id
+    user_id = current_user_repository.user&.id
     domain_events.each { event_publisher.publish(_1[:event_name], _1[:payload].merge(current_user_id: user_id)) }
     Success.new
   end
