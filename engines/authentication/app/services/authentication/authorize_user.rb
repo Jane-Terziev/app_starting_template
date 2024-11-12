@@ -1,13 +1,14 @@
 module Authentication
-  class AuthorizeUser < ::ApplicationService
-    class Validator < ApplicationValidator
-      attribute :resource, :string
-      attribute :action, :string
-
-      validates :resource, :action, presence: true
-    end
-
+  class AuthorizeUser
+    include ApplicationService
     inject_dependencies({ user_permission_repository: UserPermission })
+
+    class Validator
+      include ApplicationValidator
+
+      attribute :resource, :string, required: true
+      attribute :action, :string, required: true
+    end
 
     def run(params:)
       validate_params(params)

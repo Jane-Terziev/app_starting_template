@@ -1,15 +1,17 @@
 module Authentication
-  class AuthenticateUser < ::ApplicationService
-    class Validator < ApplicationValidator
-      attribute :email, :string
-      attribute :password, :string
+  class AuthenticateUser
+    include ApplicationService
+    inject_dependencies({ user_repository: User })
 
-      validates :email, :password, presence: true
+    class Validator
+      include ApplicationValidator
+
+      attribute :email, :string, required: true
+      attribute :password, :string, required: true
+
       validates :email, format: { with: EMAIL_REGEX, message: "is in invalid format." }
       validates :password, length: { minimum: 5, message: "must be longer than 5 characters." }
     end
-
-    inject_dependencies({ user_repository: User })
 
     def run(params:, warden:)
       validate_params(params)
