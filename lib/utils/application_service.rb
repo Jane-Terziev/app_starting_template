@@ -30,8 +30,11 @@ module ApplicationService
   private
 
   def validate_params(params)
-    @validator = "#{self.class.name}::Validator".constantize.new(params)
-    return Failure.new(error: ValidationError.new(validator: @validator)) unless @validator.valid?
+    validator = "#{self.class.name}::Validator".constantize.new
+    result = validator.call(params)
+    return Failure.new(error: ValidationError.new(validator: validator)) if result.failure?
+
+    @sanitized_params = result.to_h
 
     Success.new
   end

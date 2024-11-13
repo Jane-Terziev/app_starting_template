@@ -3,14 +3,11 @@ module Authentication
     include ApplicationService
     inject_dependencies({ user_repository: User })
 
-    class Validator
-      include ApplicationValidator
-
-      attribute :email, :string, required: true
-      attribute :password, :string, required: true
-
-      validates :email, format: { with: EMAIL_REGEX, message: "is in invalid format." }
-      validates :password, length: { minimum: 5, message: "must be longer than 5 characters." }
+    class Validator < ApplicationContract
+      params do
+        required(:email).filled(Types::Email)
+        required(:password).filled(:string, min_size?: 5)
+      end
     end
 
     def run(params:, warden:)
@@ -23,7 +20,7 @@ module Authentication
     private
 
     def find_user
-      @user = user_repository.find_by(email: @validator.email)
+      @user = user_repository.find_by(email: @sanitized_params[:email])
 
       return Failure.new(error: ServiceError.new(message: "Invalid Credentials")) unless @user
 
@@ -31,7 +28,7 @@ module Authentication
     end
 
     def check_password
-      return Success.new if @user.valid_password?(@validator.password)
+      return Success.new if @user.valid_password?(@sanitized_params[:password])
 
       Failure.new(error: ServiceError.new(message: "Invalid Credentials"))
     end

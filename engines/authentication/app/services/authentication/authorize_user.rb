@@ -3,11 +3,11 @@ module Authentication
     include ApplicationService
     inject_dependencies({ user_permission_repository: UserPermission })
 
-    class Validator
-      include ApplicationValidator
-
-      attribute :resource, :string, required: true
-      attribute :action, :string, required: true
+    class Validator < ApplicationContract
+      params do
+        required(:resource).filled(:string)
+        required(:action).filled(:string)
+      end
     end
 
     def run(params:)
@@ -34,7 +34,7 @@ module Authentication
     def user_permission_exists?
       user_permission_repository
         .joins(:permission)
-        .where(permission: { action: @validator.action, resource: @validator.resource })
+        .where(permission: { action: @sanitized_params[:action], resource: @sanitized_params[:resource] })
         .where(user_id: @user.id)
         .exists?
     end

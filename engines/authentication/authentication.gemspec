@@ -17,5 +17,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 8.0.0.rc1"
   spec.add_dependency "devise"
   spec.add_dependency "importmap-rails"
+  spec.add_dependency "dry-validation"
   spec.add_development_dependency 'rspec-rails'
 end

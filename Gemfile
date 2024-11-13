@@ -22,6 +22,8 @@ gem "slim"
 # 3rd party integrations
 gem "newrelic_rpm" # APM and error tracker
 
+gem "dry-validation"
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false # Analysis for security vulnerabilities
