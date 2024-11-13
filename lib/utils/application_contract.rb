@@ -5,8 +5,8 @@ class ApplicationContract < Dry::Validation::Contract
 
   def call(input, context = {})
     result = super
-    set_errors(result.errors(full: true).to_hash) if result.failure?
-    set_params(input)
+    @errors = result.errors(full: true).to_hash.with_indifferent_access if result.failure?
+    @params = input.with_indifferent_access
 
     result
   end
@@ -15,15 +15,7 @@ class ApplicationContract < Dry::Validation::Contract
     @params ||= {}
   end
 
-  def set_params(params)
-    @params = params.with_indifferent_access
-  end
-
   def errors
     @errors ||= {}
-  end
-
-  def set_errors(errors)
-    @errors = errors.with_indifferent_access
   end
 end
