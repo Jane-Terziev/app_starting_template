@@ -32,11 +32,11 @@ sudo su
 yum update -y && yum install docker -y && service docker start && usermod -a -G docker ec2-user
 ```
 
-Copy <code>your-ec2-public-ip</code> and replace <code>54.93.63.162</code> inside the config/deploy.yml file with it.
+Replace **54.93.63.162** inside the config/deploy.yml file with **your-ec2-public-ip**.
 
 ### Dockerhub
 Create a Dockerhub account and create a private repository.
-Replace janeterziev2 inside of config/deploy with your dockerhub username.
+Replace **janeterziev2** inside of ***config/deploy.yml*** with your dockerhub username.
 
 ### Github Secrets
 Go to your Github repository and add all the secrets mentioned in the ***.env_sample*** file. Additionally, you will need to 
