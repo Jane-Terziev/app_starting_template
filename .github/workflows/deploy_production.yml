@@ -28,83 +28,41 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-  run_tests:
-    name: 'Run Tests'
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
-
-      - name: Set up database and run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_HOST: localhost
-          DATABASE_NAME: app_name_test
-          DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: postgres
-        run: |
-          bundle exec rake db:test:prepare
-          bundle exec rspec
-
-      - name: Upload screenshots on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/capybara
-          if-no-files-found: ignore
-
-  deploy_production:
-    name: 'Deploy to Production'
-    runs-on: ubuntu-latest
-    environment: Production
-    needs: [run_lints_and_security_checks, run_tests]  # Only run if other jobs are successful
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Install required packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client
-
-      - name: Add Kamal secrets file
-        run: |
-          mkdir -p .kamal
-          echo "KAMAL_REGISTRY_PASSWORD=${{ secrets.KAMAL_REGISTRY_PASSWORD }}" >> .kamal/secrets
-          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> .kamal/secrets
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .kamal/secrets
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .kamal/secrets
-          echo "NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }}" >> .kamal/secrets
-
-      - name: Add SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-ssh-key.pem
-          chmod 600 ~/.ssh/ec2-ssh-key.pem
-
-      - name: Deploy to production with Kamal
-        if: success()
-        run: ./bin/kamal deploy
+#  deploy_production:
+#    name: 'Deploy to Production'
+#    runs-on: ubuntu-latest
+#    environment: Production
+#    needs: [run_lints_and_security_checks, run_tests]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: .ruby-version
+#          bundler-cache: true
+#
+#      - name: Install required packages
+#        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips
+#
+#      - name: Add Kamal secrets file
+#        run: |
+#          mkdir -p .kamal
+#          echo "KAMAL_REGISTRY_PASSWORD=${{ secrets.KAMAL_REGISTRY_PASSWORD }}" >> .kamal/secrets
+#          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> .kamal/secrets
+#          echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .kamal/secrets
+#          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .kamal/secrets
+#          echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .kamal/secrets
+#          echo "ACTIVE_STORAGE_SERVICE=${{ secrets.ACTIVE_STORAGE_SERVICE }}" >> .kamal/secrets
+#          echo "NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }}" >> .kamal/secrets
+#
+#      - name: Add SSH key
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-ssh-key.pem
+#          chmod 600 ~/.ssh/ec2-ssh-key.pem
+#
+#      - name: Deploy to production with Kamal
+#        if: success()
+#        run: ./bin/kamal deploy

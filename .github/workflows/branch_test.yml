@@ -1,4 +1,4 @@
-name: Run pre-deploy flow
+name: Deploy to Production
 
 on:
   pull_request:
@@ -6,18 +6,9 @@ on:
     branches-ignore: [ main ]
 
 jobs:
-  tests:
-    name: 'Run lints, audits and specs'
+  run_lints_and_security_checks:
+    name: 'Run Lints and Security Checks'
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,22 +28,18 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client libpq-dev
+  run_specs:
+    name: "Run RSpec"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
 
       - name: Run RSpec
-        env:
-          RAILS_ENV: test
-          DATABASE_HOST: localhost
-          DATABASE_NAME: app_name_test
-          DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: postgres
-        run: bundle exec rake db:test:prepare spec
-
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/capybara
-          if-no-files-found: ignore
+        run: bundle exec rspec

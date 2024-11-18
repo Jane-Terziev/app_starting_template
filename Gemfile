@@ -4,7 +4,7 @@ gem "rails", "~> 8.0"
 
 # Infrastructure
 gem "puma", ">= 5.0" # Server
-gem "pg" # Postgres Database
+gem "sqlite3", ">= 2.1" # SQLite database
 gem "solid_cache" # Database backed caching
 gem "solid_queue" # Database backed background worker
 gem "solid_cable" # Database backed websocket notification

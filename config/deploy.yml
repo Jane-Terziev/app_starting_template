@@ -3,11 +3,14 @@ image: janeterziev2/app_name
 
 servers:
   web:
-    - 54.93.63.162
+    - xx.xx.xx.xx
+
+volumes:
+  - "storage:/rails/storage"
 
 proxy:
   ssl: false
-  host: 54.93.63.162
+  host: xx.xx.xx.xx
 
 registry:
   username: janeterziev2
@@ -25,25 +28,12 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - NEW_RELIC_LICENSE_KEY
-    - DATABASE_USERNAME
-    - DATABASE_PASSWORD
   clear:
     SOLID_QUEUE_IN_PUMA: true
-    DATABASE_HOST: app_name-db
-    DATABASE_NAME: app_name_production
     RAILS_LOG_LEVEL: debug
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
-  dbc: app exec --interactive --reuse "bin/rails dbconsole"
-
-accessories:
-  db:
-    image: 'postgres:13'
-    host: 54.93.63.162
-    port: 127.0.0.1:5432:5432
-    env:
-      clear:
-        POSTGRES_HOST_AUTH_METHOD: "trust"
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"`
